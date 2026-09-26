@@ -1,0 +1,21 @@
+{
+  "name": "campusmind-ai-architecture",
+  "version": "1.0.0",
+  "description": "Live interactive system architecture and verified diagrams for CampusMind AI, generated with Archify.",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "inject-nav": "node scripts/inject-navbar.js"
+  },
+  "keywords": [
+    "campusmind-ai",
+    "archify",
+    "system-architecture",
+    "interactive-diagram",
+    "sppu",
+    "rag"
+  ],
+  "author": "Dhanaji005",
+  "license": "MIT"
+}

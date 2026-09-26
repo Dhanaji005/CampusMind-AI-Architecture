@@ -1,0 +1,77 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "SPPU 75% Attendance & Defaulter Engine",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "csv-ingestion",
+        "label": "1-Click CSV Ingestion",
+        "focus": ["hod_upload", "parser", "evaluator"],
+        "note": "HOD uploads department lecture attendance sheets for automated batch ingestion."
+      },
+      {
+        "id": "sppu-categorization",
+        "label": "Ordinance 0.60 Classification",
+        "focus": ["evaluator", "good_status", "defaulter_status"],
+        "note": "Classify students into Good (>=75%) and Critical Defaulter (<60%)."
+      },
+      {
+        "id": "actions-and-records",
+        "label": "Enforcement & Audit",
+        "focus": ["defaulter_status", "hall_ticket_lock", "audit_log"],
+        "note": "Lock university exam hall tickets and record audit evidence."
+      }
+    ],
+    "output": "attendance-workflow.html"
+  },
+  "lanes": [
+    { "id": "hod", "label": "Department HOD & Faculty" },
+    { "id": "engine", "label": "Attendance Processing Engine" },
+    { "id": "sppu", "label": "SPPU Ordinance 0.60 Compliance", "variant": "exception" },
+    { "id": "records", "label": "Academic Actions & Storage" }
+  ],
+  "phases": [
+    { "id": "phase_ingest", "label": "Upload & Parse", "fromCol": 0, "toCol": 1 },
+    { "id": "phase_eval", "label": "Evaluate Compliance", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "phase_action", "label": "Actions & Records", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["hod_upload", "parser", "evaluator", "defaulter_status", "hall_ticket_lock"],
+  "nodes": [
+    { "id": "hod_upload", "lane": "hod", "col": 0, "type": "external", "label": "HOD Portal", "sublabel": "drag-and-drop CSV", "width": 132 },
+    { "id": "parser", "lane": "engine", "col": 1, "type": "backend", "label": "CSV Parser", "sublabel": "extract lecture roll", "width": 132 },
+    { "id": "evaluator", "lane": "engine", "col": 2, "type": "backend", "label": "SPPU Calculator", "sublabel": "(Attended / Total) * 100", "width": 132 },
+    { "id": "good_status", "lane": "sppu", "col": 3, "type": "backend", "label": ">= 75% Eligible", "sublabel": "Hall Ticket Approved", "tag": "Green Badge", "width": 132 },
+    { "id": "defaulter_status", "lane": "sppu", "col": 4, "type": "security", "label": "< 60% Critical", "sublabel": "Exam Hall Ticket Held", "tag": "Red Badge", "width": 132 },
+    { "id": "hall_ticket_lock", "lane": "records", "col": 5, "type": "security", "label": "Exam Cell Lock", "sublabel": "block hall ticket", "width": 132 },
+    { "id": "audit_log", "lane": "records", "col": 4, "type": "database", "label": "Academic Store", "sublabel": "commit audit history", "width": 132 }
+  ],
+  "edges": [
+    { "id": "s1", "from": "hod_upload", "to": "parser", "label": "upload CSV", "variant": "emphasis" },
+    { "id": "s2", "from": "parser", "to": "evaluator", "label": "lecture roll", "variant": "emphasis" },
+    { "id": "s3", "from": "evaluator", "to": "good_status", "label": ">= 75%", "variant": "emphasis" },
+    { "id": "s4", "from": "evaluator", "to": "defaulter_status", "label": "< 60%", "variant": "security" },
+    { "id": "s5", "from": "good_status", "to": "audit_log", "label": "certify", "variant": "default" },
+    { "id": "s6", "from": "defaulter_status", "to": "hall_ticket_lock", "label": "block ticket", "variant": "security" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "SPPU Ordinance 0.60",
+      "items": [
+        "Students with >= 75% attendance are automatically certified for semester exam hall tickets",
+        "Attendance percentage is computed transparently: (Attended / Conducted) * 100"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Defaulter Protection",
+      "items": [
+        "Students below 60% are flagged as Critical Defaulters with mandatory parent notification",
+        "Department HOD can view department-wide trends and export certified lists"
+      ]
+    }
+  ]
+}

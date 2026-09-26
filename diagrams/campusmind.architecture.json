@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "CampusMind AI Runtime Architecture",
+    "output": "index.html",
+    "quality_profile": "showcase",
+    "viewBox": [1140, 520],
+    "views": [
+      {
+        "id": "primary-path",
+        "label": "Primary Query & 3D Voice Flow",
+        "focus": ["users", "avatar_3d", "api_gateway", "flask_core", "rag_engine", "openrouter_ai", "voice_service", "elevenlabs_tts"],
+        "note": "Follow voice interactions from 3D WebGL avatar through RAG inference to ElevenLabs audio return."
+      },
+      {
+        "id": "attendance-pipeline",
+        "label": "SPPU 75% Attendance Pipeline",
+        "focus": ["users", "web_ui", "api_gateway", "flask_core", "attendance_engine", "sqlite_db"],
+        "note": "Trace HOD attendance CSV ingestion, defaulter classification, and persistent SQLite storage."
+      },
+      {
+        "id": "security-and-data",
+        "label": "Trust Boundaries and State",
+        "focus": ["api_gateway", "flask_core", "sqlite_db", "rag_engine"],
+        "note": "Examine JWT role-based access control guarding application services and campus records."
+      }
+    ]
+  },
+  "components": [
+    { "id": "users", "type": "external", "label": "Campus Users", "sublabel": "Students / Faculty", "pos": [40, 260], "size": [120, 60] },
+    { "id": "web_ui", "type": "frontend", "label": "Web Portal UI", "sublabel": "Glassmorphism UI", "pos": [210, 160], "size": [124, 60] },
+    { "id": "avatar_3d", "type": "frontend", "label": "3D Avatar Engine", "sublabel": "Three.js + Lip-Sync", "pos": [210, 360], "size": [124, 60], "tag": "WebGL ARKit" },
+    { "id": "api_gateway", "type": "security", "label": "Security Gateway", "sublabel": "JWT RBAC & CORS", "pos": [390, 260], "size": [124, 60], "tag": "Token Guard" },
+    { "id": "flask_core", "type": "backend", "label": "Flask API", "sublabel": "REST Controller", "brand": "flask", "pos": [570, 260], "size": [130, 60] },
+    { "id": "rag_engine", "type": "backend", "label": "RAG Engine", "sublabel": "VPCSC Knowledge", "brand": "python", "pos": [760, 140], "size": [130, 60] },
+    { "id": "attendance_engine", "type": "backend", "label": "Attendance Engine", "sublabel": "SPPU 75% Calculator", "pos": [760, 260], "size": [130, 60] },
+    { "id": "voice_service", "type": "backend", "label": "Voice Coordinator", "sublabel": "Viseme Alignment", "pos": [760, 380], "size": [130, 60] },
+    { "id": "openrouter_ai", "type": "external", "label": "OpenRouter AI", "sublabel": "Nemotron / DeepSeek", "pos": [960, 140], "size": [130, 60] },
+    { "id": "sqlite_db", "type": "database", "label": "SQLite DB", "sublabel": "WAL Journal Store", "brand": "sqlite", "pos": [960, 260], "size": [130, 60] },
+    { "id": "elevenlabs_tts", "type": "external", "label": "ElevenLabs TTS", "sublabel": "Neural Flash v2.5", "pos": [960, 380], "size": [130, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "CampusMind Core Application Network", "wraps": ["api_gateway", "flask_core", "rag_engine", "attendance_engine", "voice_service", "sqlite_db"] },
+    { "kind": "region", "label": "External Cloud Intelligence", "wraps": ["openrouter_ai", "elevenlabs_tts"] }
+  ],
+  "connections": [
+    { "id": "users-to-ui", "from": "users", "to": "web_ui", "label": "HTTPS", "variant": "emphasis" },
+    { "id": "users-to-avatar", "from": "users", "to": "avatar_3d", "label": "voice", "variant": "emphasis" },
+    { "id": "ui-to-gateway", "from": "web_ui", "to": "api_gateway", "label": "REST" },
+    { "id": "avatar-to-gateway", "from": "avatar_3d", "to": "api_gateway", "label": "audio RPC" },
+    { "id": "gateway-to-flask", "from": "api_gateway", "to": "flask_core", "label": "claims ok", "variant": "security" },
+    { "id": "flask-to-rag", "from": "flask_core", "to": "rag_engine", "label": "dispatch", "fromSide": "top", "toSide": "left" },
+    { "id": "flask-to-attendance", "from": "flask_core", "to": "attendance_engine", "label": "SPPU 75%" },
+    { "id": "flask-to-voice", "from": "flask_core", "to": "voice_service", "label": "TTS call", "fromSide": "bottom", "toSide": "left" },
+    { "id": "rag-to-llm", "from": "rag_engine", "to": "openrouter_ai", "label": "prompt", "variant": "emphasis" },
+    { "id": "attendance-to-db", "from": "attendance_engine", "to": "sqlite_db", "label": "SQL write" },
+    { "id": "voice-to-tts", "from": "voice_service", "to": "elevenlabs_tts", "label": "stream", "variant": "emphasis" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Client Tier",
+      "items": [
+        "Glassmorphism role-based dashboards for Students, Faculty, and Principal",
+        "Ready Player Me 3D WebGL avatar with real-time TalkingHead viseme sync"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Application Core",
+      "items": [
+        "Flask modular REST backend with JWT role validation",
+        "Deterministic VPCSC Indapur college manual RAG engine with offline TF-IDF fallback",
+        "SPPU 75% attendance engine with automatic defaulter classification"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Intelligence & Cloud",
+      "items": [
+        "OpenRouter multi-model LLM cascade (Nemotron, DeepSeek, Gemma)",
+        "ElevenLabs Flash v2.5 neural voice synthesis with millisecond phoneme alignment",
+        "Zero-config high-concurrency SQLite database with WAL journaling"
+      ]
+    }
+  ]
+}

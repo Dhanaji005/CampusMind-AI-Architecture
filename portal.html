@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusMind AI — Live Interactive Architecture Hub</title>
+  <meta name="description" content="Official Interactive Architecture & Systems Hub for CampusMind AI. Powered by Archify.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card-bg: rgba(22, 27, 34, 0.7);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    /* Ambient Glow */
+    .glow-1 {
+      position: fixed; top: -100px; left: 20%; width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    .glow-2 {
+      position: fixed; bottom: 0; right: 10%; width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+    header {
+      padding: 48px 0 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 20px; color: white;
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+    }
+    .brand-title {
+      font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .badge-live {
+      background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .badge-live::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; background: #34d399;
+      box-shadow: 0 0 8px #34d399;
+    }
+    .nav-actions {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 18px; border-radius: 8px;
+      font-size: 13px; font-weight: 600; text-decoration: none;
+      transition: all 0.2s ease; cursor: pointer; border: none;
+    }
+    .btn-primary {
+      background: #0284c7; color: white;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    }
+    .btn-primary:hover {
+      background: #0369a1; transform: translateY(-1px);
+    }
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+    .hero-pre {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 54px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 880px;
+      margin: 0 auto 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    /* Diagram Grid */
+    .diagram-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+    }
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #64748b;
+      margin-bottom: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 14px;
+    }
+
+    /* Live Preview Section */
+    .preview-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 60px;
+    }
+    .preview-header {
+      padding: 16px 24px;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .preview-tabs {
+      display: flex;
+      gap: 8px;
+    }
+    .tab-btn {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    .iframe-wrapper {
+      position: relative;
+      width: 100%;
+      height: 680px;
+      background: #111418;
+    }
+    .iframe-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Specs & Credentials */
+    .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+    @media (max-width: 860px) {
+      .specs-grid { grid-template-columns: 1fr; }
+    }
+    .specs-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .specs-box h4 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .spec-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+    }
+    .spec-item:last-child { border-bottom: none; }
+    .spec-key { color: var(--text-muted); }
+    .spec-val { font-family: var(--font-mono); color: var(--primary); font-weight: 500; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0 48px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">C</div>
+        <div>
+          <div class="brand-title">CampusMind AI</div>
+          <span class="badge badge-live">Live Architecture Hub</span>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="https://github.com/Dhanaji005/CampusMind-AI" target="_blank" class="btn btn-outline">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          CampusMind Repo ↗
+        </a>
+        <a href="index.html" class="btn btn-primary">
+          Open Fullscreen Diagram
+        </a>
+      </div>
+    </header>
+
+    <div class="hero">
+      <div class="hero-pre">Institutional AI Architecture & Verified Models</div>
+      <h1>Interactive System Architecture for CampusMind AI</h1>
+      <p>
+        Autonomous Campus Operating System & 3D Companion for VPCSC Indapur (SPPU).
+        Rendered with <strong style="color:var(--text);">Archify</strong> into fully standalone, reactive, and explorable HTML diagrams.
+      </p>
+    </div>
+
+    <!-- 3 Core Interactive Diagrams -->
+    <div class="diagram-grid">
+      <!-- Card 1 -->
+      <div class="card">
+        <div>
+          <div class="card-tag">Architecture Diagram</div>
+          <h3>🏗️ Runtime System Architecture</h3>
+          <p>
+            Complete system topology spanning the Client Tier (Glassmorphism & 3D WebGL), Security Gateway (JWT RBAC), Flask REST core, VPCSC RAG Engine, SQLite WAL, and Cloud AI Providers.
+          </p>
+        </div>
+        <div>
+          <div class="card-meta">
+            <span>Profile: Showcase</span>
+            <span>•</span>
+            <span>11 Components</span>
+            <span>•</span>
+            <span>3 Guided Views</span>
+          </div>
+          <a href="index.html" class="btn btn-primary" style="width: 100%; justify-content: center;">
+            Explore Runtime Diagram ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card">
+        <div>
+          <div class="card-tag">Sequence Diagram</div>
+          <h3>🎙️ JARVIS 3D Voice & RAG Flow</h3>
+          <p>
+            Millisecond-accurate request sequence: 'Hey Campus' wake phrase detection via Web Speech API, VPCSC context extraction, OpenRouter inference, ElevenLabs TTS, and TalkingHead.js ARKit visemes.
+          </p>
+        </div>
+        <div>
+          <div class="card-meta">
+            <span>Profile: Showcase</span>
+            <span>•</span>
+            <span>6 Lifelines</span>
+            <span>•</span>
+            <span>10 Traced Messages</span>
+          </div>
+          <a href="voice-sequence.html" class="btn btn-outline" style="width: 100%; justify-content: center;">
+            Explore Voice Sequence ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card">
+        <div>
+          <div class="card-tag">Workflow Diagram</div>
+          <h3>📋 SPPU 75% Attendance Engine</h3>
+          <p>
+            Automated batch ingestion workflow enforcing Savitribai Phule Pune University Ordinance 0.60. Drag-and-drop CSV ingestion, defaulter classification, and exam hall ticket locking.
+          </p>
+        </div>
+        <div>
+          <div class="card-meta">
+            <span>Profile: Showcase</span>
+            <span>•</span>
+            <span>4 Lanes</span>
+            <span>•</span>
+            <span>Ordinance 0.60 Rules</span>
+          </div>
+          <a href="attendance-workflow.html" class="btn btn-outline" style="width: 100%; justify-content: center;">
+            Explore Attendance Workflow ↗
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Preview Frame -->
+    <div class="preview-section">
+      <div class="preview-header">
+        <div class="preview-tabs">
+          <button class="tab-btn active" onclick="switchFrame('index.html', this)">🏗️ Runtime Architecture</button>
+          <button class="tab-btn" onclick="switchFrame('voice-sequence.html', this)">🎙️ 3D Voice Sequence</button>
+          <button class="tab-btn" onclick="switchFrame('attendance-workflow.html', this)">📋 SPPU 75% Workflow</button>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);">
+          Press <kbd style="background:#1e293b;padding:2px 6px;border-radius:4px;border:1px solid #334155;">?</kbd> in viewer for shortcut keys
+        </div>
+      </div>
+      <div class="iframe-wrapper">
+        <iframe id="diagram-frame" src="index.html"></iframe>
+      </div>
+    </div>
+
+    <!-- Specs and Tech Details -->
+    <div class="specs-grid">
+      <div class="specs-box">
+        <h4>⚡ System Specs & Verification</h4>
+        <div class="spec-item">
+          <span class="spec-key">Backend Framework</span>
+          <span class="spec-val">Python 3.10+ / Flask REST</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-key">3D Graphics Engine</span>
+          <span class="spec-val">Three.js + TalkingHead.js</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-key">RAG Knowledge Base</span>
+          <span class="spec-val">VPCSC Indapur Manual + TF-IDF</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-key">LLM Gateway</span>
+          <span class="spec-val">OpenRouter (Nemotron 3.5 / DeepSeek)</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-key">Neural TTS</span>
+          <span class="spec-val">ElevenLabs Flash v2.5 (Visemes)</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-key">Primary Database</span>
+          <span class="spec-val">SQLite (WAL Mode) + Supabase Sync</span>
+        </div>
+      </div>
+
+      <div class="specs-box">
+        <h4>🔐 SPPU Compliance & Roles</h4>
+        <div class="spec-item">
+          <span class="spec-key">University Mandate</span>
+          <span class="spec-val">SPPU Ordinance 0.60 (75% Rule)</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-key">Authentication</span>
+          <span class="spec-val">JWT Tokens (pbkdf2:sha256)</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-key">Supported Roles</span>
+          <span class="spec-val">Student, Faculty, HOD, Principal, Admin</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-key">Voice Wake-Word</span>
+          <span class="spec-val">"Hey Campus" (Web Speech API)</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-key">Diagram Generator</span>
+          <span class="spec-val">Archify v2.17 Agent Skill</span>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>
+        CampusMind AI Architecture Showcase &bull; Vidya Pratishthan's Commerce & Science College, Indapur (SPPU)
+      </p>
+      <p style="margin-top: 8px; font-size: 12px; color: #64748b;">
+        Generated using <a href="https://github.com/tt-a1i/archify" target="_blank" style="color:var(--primary);text-decoration:none;">tt-a1i/archify</a>. Free to share, present, and deploy.
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    function switchFrame(url, btn) {
+      document.getElementById('diagram-frame').src = url;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>

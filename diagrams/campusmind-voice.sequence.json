@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "JARVIS 3D Voice Assistant & RAG Sequence",
+    "output": "voice-sequence.html",
+    "viewBox": [1080, 560],
+    "column_fit": "spread",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "voice-capture",
+        "label": "Voice Input & STT",
+        "focus": ["user", "web", "api"],
+        "note": "Follow wake-word detection and speech-to-text prompt dispatch to Flask backend."
+      },
+      {
+        "id": "rag-inference",
+        "label": "VPCSC RAG Grounding",
+        "focus": ["api", "rag", "llm"],
+        "note": "Retrieve institutional context and query OpenRouter LLMs."
+      },
+      {
+        "id": "neural-speech-sync",
+        "label": "Neural TTS & Lip-Sync",
+        "focus": ["api", "tts", "web", "user"],
+        "note": "Stream ElevenLabs audio and align TalkingHead ARKit blendshapes in real time."
+      }
+    ]
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "Student", "sublabel": "voice user" },
+    { "id": "web", "type": "frontend", "label": "Avatar WebGL", "sublabel": "Three.js UI" },
+    { "id": "api", "type": "backend", "label": "Flask API", "sublabel": "app controller" },
+    { "id": "rag", "type": "backend", "label": "RAG Engine", "sublabel": "VPCSC context" },
+    { "id": "llm", "type": "external", "label": "OpenRouter", "sublabel": "Nemotron/Gemma" },
+    { "id": "tts", "type": "external", "label": "ElevenLabs", "sublabel": "Neural Flash 2.5" }
+  ],
+  "segments": [
+    { "from": 150, "to": 240, "label": "Voice Capture & Dispatch" },
+    { "from": 250, "to": 370, "label": "Context Retrieval & LLM Generation" },
+    { "from": 380, "to": 480, "label": "Speech Synthesis & Lip-Sync" }
+  ],
+  "messages": [
+    { "id": "msg-wake", "from": "user", "to": "web", "y": 160, "label": "'Hey Campus'", "variant": "default" },
+    { "id": "msg-query", "from": "web", "to": "api", "y": 190, "label": "POST /api/chatbot/chat", "variant": "emphasis" },
+    { "id": "msg-rag", "from": "api", "to": "rag", "y": 220, "label": "retrieve context", "variant": "default" },
+    { "id": "msg-rag-ret", "from": "rag", "to": "api", "y": 255, "label": "VPCSC rulebook chunks", "variant": "return" },
+    { "id": "msg-llm", "from": "api", "to": "llm", "y": 285, "label": "generate answer", "variant": "emphasis" },
+    { "id": "msg-llm-ret", "from": "llm", "to": "api", "y": 325, "label": "grounded response text", "variant": "return" },
+    { "id": "msg-tts", "from": "api", "to": "tts", "y": 360, "label": "synthesize speech", "variant": "emphasis" },
+    { "id": "msg-tts-ret", "from": "tts", "to": "api", "y": 400, "label": "audio stream + visemes", "variant": "return" },
+    { "id": "msg-sync", "from": "api", "to": "web", "y": 435, "label": "deliver MP3 + morph targets", "variant": "return" },
+    { "id": "msg-render", "from": "web", "to": "user", "y": 465, "label": "3D lip-sync playback", "variant": "default" }
+  ],
+  "activations": [
+    { "participant": "web", "from": 160, "to": 470, "type": "frontend" },
+    { "participant": "api", "from": 190, "to": 440, "type": "backend" },
+    { "participant": "rag", "from": 220, "to": 260, "type": "backend" },
+    { "participant": "llm", "from": 285, "to": 330, "type": "external" },
+    { "participant": "tts", "from": 360, "to": 405, "type": "external" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Voice Pipeline",
+      "items": [
+        "Continuous Web Speech API recognition captures 'Hey Campus' wake phrase",
+        "Deterministic local context retrieval prevents academic hallucinations"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Multimodal Synthesis",
+      "items": [
+        "ElevenLabs Flash v2.5 delivers sub-second speech synthesis",
+        "TalkingHead.js matches phoneme timestamps to Ready Player Me visemes"
+      ]
+    }
+  ]
+}
